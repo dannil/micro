@@ -1,14 +1,14 @@
 package com.github.dannil.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class PersonDto {
 
     private UUID id;

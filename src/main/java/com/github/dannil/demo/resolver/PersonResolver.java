@@ -24,7 +24,8 @@ public class PersonResolver {
     @QueryMapping
     public Collection<PersonDto> persons(@Argument Optional<UUID> id) {
         if (id.isPresent()) {
-            return List.of(personService.getPerson(id.get()).orElse(null));
+            Optional<PersonDto> person = personService.getPerson(id.get());
+            return person.map(List::of).orElseGet(List::of);
         }
         return personService.getPersons();
     }
@@ -40,11 +41,8 @@ public class PersonResolver {
     }
 
     @SubscriptionMapping
-    public Publisher<PersonDto> personSubscription(@Argument UUID id) {
-        if (id == null) {
-            return personService.notifyChange();
-        }
-        return personService.notifyChange(id);
+    public Publisher<PersonDto> personSubscription() {
+        return personService.listen();
     }
 
 }
