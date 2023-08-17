@@ -40,8 +40,11 @@ public class PersonResolver {
     }
 
     @SubscriptionMapping
-    public Publisher<Person> personSubscription() {
-        return personService.notifyChange();
+    public Publisher<Person> personSubscription(@Argument String id) {
+        if (id == null) {
+            return personService.notifyChange();
+        }
+        return personService.notifyChange(id);
     }
 
 }

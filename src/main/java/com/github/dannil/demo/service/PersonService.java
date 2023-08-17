@@ -2,11 +2,10 @@ package com.github.dannil.demo.service;
 
 import com.github.dannil.demo.model.Address;
 import com.github.dannil.demo.model.Person;
+import com.github.dannil.demo.publisher.PersonPublisher;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Sinks;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,13 +15,10 @@ import java.util.Optional;
 @Service
 public class PersonService {
 
+    @Autowired
+    private PersonPublisher publisher;
+
     private Map<String, Person> persons;
-
-    @Autowired
-    private Flux<Person> personFlux;
-
-    @Autowired
-    private Sinks.Many<Person> personSink;
 
     public PersonService() {
         persons = new HashMap<>();
@@ -41,7 +37,7 @@ public class PersonService {
     public Person addPerson(String id, String firstName, String lastName, Address address) {
         Person person = new Person(id, firstName, lastName, address);
         persons.put(id, person);
-        personSink.tryEmitNext(person);
+        publisher.publish(person);
         return person;
     }
 
@@ -49,13 +45,17 @@ public class PersonService {
         Optional<Person> person = Optional.ofNullable(persons.get(id));
         if (person.isPresent()) {
             persons.remove(id);
-            personSink.tryEmitNext(person.get());
+            publisher.publish(person.get());
         }
         return person;
     }
 
     public Publisher<Person> notifyChange() {
-        return personFlux;
+        return publisher.subscribe();
+    }
+
+    public Publisher<Person> notifyChange(String id) {
+        return publisher.subscribe(id);
     }
 
 }

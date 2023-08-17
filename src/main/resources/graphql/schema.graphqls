@@ -25,5 +25,5 @@ type Mutation {
 }
 
 type Subscription {
-    personSubscription: Person!
+    personSubscription(id: String): Person!
 }
