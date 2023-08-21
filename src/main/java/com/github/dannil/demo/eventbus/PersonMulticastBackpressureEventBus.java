@@ -1,4 +1,4 @@
-package com.github.dannil.demo.publisher;
+package com.github.dannil.demo.eventbus;
 
 import com.github.dannil.demo.model.Person;
 import org.reactivestreams.Publisher;
@@ -7,29 +7,31 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
 
+import java.util.AbstractMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
-public class PersonPublisher {
+public class PersonMulticastBackpressureEventBus implements EventBus<String, Person> {
 
     private Sinks.Many<Person> sink;
     private Flux<Person> flux;
 
-    public PersonPublisher() {
+    public PersonMulticastBackpressureEventBus() {
         this.sink = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
         this.flux = sink.asFlux();
     }
 
-    public void publish(Person p) {
-        sink.tryEmitNext(p);
+    public Sinks.EmitResult publish(String key, Person value) {
+        return sink.tryEmitNext(value);
     }
 
     public Publisher<Person> subscribe() {
         return flux;
     }
 
-    public Publisher<Person> subscribe(String id) {
-        return flux.filter(p -> Objects.equals(id, p.getId()));
+    public Publisher<Person> subscribe(String key) {
+        return flux.filter(p -> Objects.equals(key, p.getId()));
     }
 
 }
