@@ -4,6 +4,7 @@ import com.github.dannil.demo.model.Person;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
 
@@ -22,8 +23,8 @@ public class PersonMulticastBackpressureEventBus implements EventBus<String, Per
         this.flux = sink.asFlux();
     }
 
-    public Sinks.EmitResult publish(String key, Person value) {
-        return sink.tryEmitNext(value);
+    public Mono<Sinks.EmitResult> publish(String key, Person value) {
+        return Mono.just(sink.tryEmitNext(value));
     }
 
     public Publisher<Person> subscribe() {

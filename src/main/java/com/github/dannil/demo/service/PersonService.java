@@ -4,8 +4,11 @@ import com.github.dannil.demo.model.Address;
 import com.github.dannil.demo.model.Person;
 import com.github.dannil.demo.eventbus.PersonMulticastBackpressureEventBus;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
 import java.util.*;
@@ -24,28 +27,28 @@ public class PersonService {
         persons.put("2", new Person("2", "Alice", "Matthews", new Address("Diagonal Alley", "13 BEF-97")));
     }
 
-    public Collection<Person> getPersons() {
-        return persons.values();
+    public Flux<Person> getPersons() {
+        return Flux.fromIterable(persons.values());
     }
 
-    public Person getPerson(String id) {
-        return persons.get(id);
+    public Mono<Person> getPerson(String id) {
+        return Mono.just(persons.get(id));
     }
 
-    public Person addPerson(String id, String firstName, String lastName, Address address) {
+    public Mono<Person> addPerson(String id, String firstName, String lastName, Address address) {
         Person person = new Person(id, firstName, lastName, address);
         persons.put(id, person);
-        Sinks.EmitResult result = pubsub.publish(id, person);
-        return person;
+        pubsub.publish(id, person);
+        return Mono.just(person);
     }
 
-    public Optional<Person> deletePerson(String id) {
+    public Mono<Person> deletePerson(String id) {
         Optional<Person> person = Optional.ofNullable(persons.get(id));
         if (person.isPresent()) {
             persons.remove(id);
-            Sinks.EmitResult result = pubsub.publish(id, person.get());
+            pubsub.publish(id, person.get());
         }
-        return person;
+        return Mono.justOrEmpty(person);
     }
 
     public Publisher<Person> notifyChange() {
@@ -55,5 +58,4 @@ public class PersonService {
     public Publisher<Person> notifyChange(String id) {
         return pubsub.subscribe(id);
     }
-
 }
