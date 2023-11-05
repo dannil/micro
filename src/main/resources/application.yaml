@@ -1,2 +1,16 @@
 spring.graphql.graphiql.enabled: true
 spring.graphql.websocket.path: /graphql
+
+spring.datasource.hikari:
+  connectionTimeout: 20000
+  maximumPoolSize: 5
+
+spring.datasource:
+  url: jdbc:postgresql://localhost:32100/spring-graphql
+  username: dev
+  password: default-password
+
+spring.jpa.properties.jakarta.persistence.schema-generation:
+  database.action: drop-and-create
+  create-source: metadata
+  drop-source: metadata

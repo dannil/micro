@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:16.0'
+    ports:
+      - '32100:5432'
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: default-password
+      POSTGRES_DB: spring-graphql

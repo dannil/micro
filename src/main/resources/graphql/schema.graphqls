@@ -1,8 +1,9 @@
+scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")
+
 type Person {
     id: ID!
     firstName: String!
     lastName: String!
-    address: Address!
 }
 
 type Address {
@@ -16,14 +17,14 @@ input AddressInput {
 }
 
 type Query {
-    persons(id: String): [Person!]!
+    persons(id: UUID): [Person!]!
 }
 
 type Mutation {
-    addPerson(id: String!, firstName: String!, lastName: String!, address: AddressInput!): Person!
-    deletePerson(id: String!): Person
+    addPerson(firstName: String!, lastName: String!): Person!
+    deletePerson(id: UUID!): Person
 }
 
 type Subscription {
-    personSubscription(id: String): Person!
+    personSubscription(id: UUID): Person!
 }

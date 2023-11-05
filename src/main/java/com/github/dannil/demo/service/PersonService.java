@@ -1,8 +1,9 @@
 package com.github.dannil.demo.service;
 
-import com.github.dannil.demo.model.Address;
-import com.github.dannil.demo.model.Person;
+import com.github.dannil.demo.model.PersonEntity;
 import com.github.dannil.demo.eventbus.PersonMulticastBackpressureEventBus;
+import com.github.dannil.demo.model.PersonDto;
+import com.github.dannil.demo.repository.PersonPostgresRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,43 +17,42 @@ public class PersonService {
     @Autowired
     private PersonMulticastBackpressureEventBus pubsub;
 
-    private Map<String, Person> persons;
+    @Autowired
+    private PersonPostgresRepository repository;
 
     public PersonService() {
-        persons = new HashMap<>();
-        persons.put("1", new Person("1", "Bob", "Ferguson", new Address("Baker Street 45", "175-42")));
-        persons.put("2", new Person("2", "Alice", "Matthews", new Address("Diagonal Alley", "13 BEF-97")));
+
     }
 
-    public Collection<Person> getPersons() {
-        return persons.values();
+    public Collection<PersonDto> getPersons() {
+        return repository.findAll().stream().map(e -> e.toDto()).toList();
     }
 
-    public Person getPerson(String id) {
-        return persons.get(id);
+    public Optional<PersonDto> getPerson(UUID id) {
+        return repository.findById(id).map(e -> e.toDto());
     }
 
-    public Person addPerson(String id, String firstName, String lastName, Address address) {
-        Person person = new Person(id, firstName, lastName, address);
-        persons.put(id, person);
-        Sinks.EmitResult result = pubsub.publish(id, person);
-        return person;
+    public PersonDto addPerson(String firstName, String lastName) {
+        PersonEntity person = new PersonEntity(firstName, lastName);
+        PersonDto persistedDto = repository.save(person).toDto();
+        Sinks.EmitResult result = pubsub.publish(persistedDto.getId(), persistedDto);
+        return persistedDto;
     }
 
-    public Optional<Person> deletePerson(String id) {
-        Optional<Person> person = Optional.ofNullable(persons.get(id));
+    public Optional<PersonDto> deletePerson(UUID id) {
+        Optional<PersonDto> person = getPerson(id);
         if (person.isPresent()) {
-            persons.remove(id);
+            repository.deleteById(id);
             Sinks.EmitResult result = pubsub.publish(id, person.get());
         }
         return person;
     }
 
-    public Publisher<Person> notifyChange() {
+    public Publisher<PersonDto> notifyChange() {
         return pubsub.subscribe();
     }
 
-    public Publisher<Person> notifyChange(String id) {
+    public Publisher<PersonDto> notifyChange(UUID id) {
         return pubsub.subscribe(id);
     }
 

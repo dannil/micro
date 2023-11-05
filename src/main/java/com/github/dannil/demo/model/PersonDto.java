@@ -2,16 +2,17 @@ package com.github.dannil.demo.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
-@NoArgsConstructor
 @Setter
-public class Address {
+public class PersonDto {
 
-    private String street;
-    private String zipCode;
+    private UUID id;
+    private String firstName;
+    private String lastName;
 
 }
