@@ -27,4 +27,6 @@ type Mutation {
 
 type Subscription {
     personSubscription(id: UUID): Person!
+    personAddedSubscription(id: UUID): Person!
+    personDeletedSubscription(id: UUID): Person!
 }

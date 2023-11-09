@@ -1,4 +1,4 @@
-package com.github.dannil.demo.configuration;
+package com.github.dannil.demo.configuration.graphql;
 
 import graphql.scalars.ExtendedScalars;
 import org.springframework.context.annotation.Bean;

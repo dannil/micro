@@ -1,4 +1,4 @@
-package com.github.dannil.demo.configuration;
+package com.github.dannil.demo.configuration.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -10,11 +10,14 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaConfiguration {
 
-    public static final String PERSONS_TOPIC = "persons";
+    @Bean
+    public NewTopic personAdded() {
+        return TopicBuilder.name(PersonTopic.ADDED).partitions(3).replicas(1).build();
+    }
 
     @Bean
-    public NewTopic persons() {
-        return TopicBuilder.name(PERSONS_TOPIC).partitions(5).replicas(1).build();
+    public NewTopic personDeleted() {
+        return TopicBuilder.name(PersonTopic.DELETED).partitions(3).replicas(1).build();
     }
 
 }

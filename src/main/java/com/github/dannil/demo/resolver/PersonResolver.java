@@ -1,5 +1,6 @@
 package com.github.dannil.demo.resolver;
 
+import com.github.dannil.demo.configuration.kafka.PersonEvent;
 import com.github.dannil.demo.model.PersonDto;
 import com.github.dannil.demo.service.PersonService;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,17 @@ public class PersonResolver {
 
     @SubscriptionMapping
     public Publisher<PersonDto> personSubscription() {
-        return personService.listen();
+        return personService.listen(PersonEvent.ALL);
+    }
+
+    @SubscriptionMapping
+    public Publisher<PersonDto> personAddedSubscription() {
+        return personService.listen(PersonEvent.ADDED);
+    }
+
+    @SubscriptionMapping
+    public Publisher<PersonDto> personDeletedSubscription() {
+        return personService.listen(PersonEvent.DELETED);
     }
 
 }

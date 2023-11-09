@@ -1,6 +1,7 @@
 package com.github.dannil.demo.service;
 
-import com.github.dannil.demo.configuration.KafkaConfiguration;
+import com.github.dannil.demo.configuration.kafka.PersonEvent;
+import com.github.dannil.demo.configuration.kafka.PersonTopic;
 import com.github.dannil.demo.eventbus.PersonMulticastBackpressureEventBus;
 import com.github.dannil.demo.model.PersonDto;
 import com.github.dannil.demo.model.PersonEntity;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
 import java.util.*;
@@ -22,7 +24,10 @@ public class PersonService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonService.class);
 
     @Autowired
-    private PersonMulticastBackpressureEventBus pubsub;
+    private PersonMulticastBackpressureEventBus addedEventBus;
+
+    @Autowired
+    private PersonMulticastBackpressureEventBus deletedEventBus;
 
     @Autowired
     private PersonPostgresRepository repository;
@@ -41,7 +46,7 @@ public class PersonService {
     public PersonDto addPerson(String firstName, String lastName) {
         PersonEntity person = new PersonEntity(firstName, lastName);
         PersonDto persistedDto = repository.save(person).toDto();
-        send(persistedDto);
+        send(persistedDto, PersonTopic.ADDED);
         return persistedDto;
     }
 
@@ -49,24 +54,34 @@ public class PersonService {
         Optional<PersonDto> person = getPerson(id);
         if (person.isPresent()) {
             repository.deleteById(id);
-            send(person.get());
+            send(person.get(), PersonTopic.DELETED);
         }
         return person;
     }
 
-    public Publisher<PersonDto> listen() {
-        return pubsub.subscribe();
+    public Publisher<PersonDto> listen(PersonEvent event) {
+        return switch (event) {
+            case ADDED -> addedEventBus.subscribe();
+            case DELETED -> deletedEventBus.subscribe();
+            case ALL -> Flux.concat(addedEventBus.subscribe(), deletedEventBus.subscribe());
+        };
     }
 
-    private void send(PersonDto person) {
-        kafkaTemplate.send(KafkaConfiguration.PERSONS_TOPIC, person);
+    private void send(PersonDto person, String topic) {
+        kafkaTemplate.send(topic, person);
         kafkaTemplate.flush();
     }
 
-    @KafkaListener(topics = KafkaConfiguration.PERSONS_TOPIC)
-    private void consumer(PersonDto person) {
-        Sinks.EmitResult result = pubsub.publish(person.getId(), person);
-        LOGGER.info("Content: {}, result: {}", person, result);
+    @KafkaListener(topics = PersonTopic.ADDED)
+    private void addedConsumer(PersonDto person) {
+        Sinks.EmitResult result = addedEventBus.publish(person.getId(), person);
+        LOGGER.info("Added a person! Content: {}, result: {}", person, result);
+    }
+
+    @KafkaListener(topics = PersonTopic.DELETED)
+    private void deletedConsumer(PersonDto person) {
+        Sinks.EmitResult result = deletedEventBus.publish(person.getId(), person);
+        LOGGER.info("Deleted a person! Content: {}, result: {}", person, result);
     }
 
 }
