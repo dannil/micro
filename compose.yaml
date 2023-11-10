@@ -1,13 +1,15 @@
-version: '2'
+version: '3.7'
 services:
   postgres:
     image: 'postgres:16.0'
+    volumes:
+      - ./docker/pg-init-scripts:/docker-entrypoint-initdb.d
     ports:
       - '32100:5432'
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: default-password
-      POSTGRES_DB: spring-graphql
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: default,person-service
   zookeeper:
     image: 'confluentinc/cp-zookeeper:7.5.1'
     ports:
