@@ -9,9 +9,22 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: default,person-service
+      POSTGRES_MULTIPLE_DATABASES: default,person-service,grafana
   rabbitmq:
     image: 'rabbitmq:3-management'
     ports:
       - '32200:5672'
       - '32210:15672'
+  grafana:
+    image: 'grafana/grafana:10.2.0'
+    depends_on:
+      - postgres
+    ports:
+      - '32300:3000'
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: postgres:5432
+      GF_DATABASE_NAME: grafana
+      GF_DATABASE_USER: grafana
+      GF_DATABASE_PASSWORD: grafana
+      GF_DATABASE_SSL_MODE: disable
