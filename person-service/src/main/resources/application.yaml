@@ -1,3 +1,5 @@
+spring.application.name: person-service
+
 spring.graphql:
   graphiql.enabled: true
   websocket.path: /graphql
@@ -16,13 +18,12 @@ spring.jpa.properties.jakarta.persistence.schema-generation:
   create-source: metadata
   drop-source: metadata
 
-spring.kafka:
-    bootstrap-servers: "localhost:32300"
-    consumer:
-      group-id: person-service
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties.spring.json.trusted.packages: com.github.dannil.springgraphql.personservice.*
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+spring.rabbitmq:
+  host: localhost
+  port: 32200
+  listener.simple.retry:
+    enabled: true
+    initial-interval: 3s
+    max-attempts: 5
+    max-interval: 20s
+    multiplier: 2

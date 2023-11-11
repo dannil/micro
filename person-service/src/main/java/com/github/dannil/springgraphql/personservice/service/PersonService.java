@@ -1,7 +1,7 @@
 package com.github.dannil.springgraphql.personservice.service;
 
-import com.github.dannil.springgraphql.personservice.configuration.kafka.PersonEvent;
-import com.github.dannil.springgraphql.personservice.configuration.kafka.PersonTopic;
+import com.github.dannil.springgraphql.personservice.configuration.PersonEvent;
+import com.github.dannil.springgraphql.personservice.configuration.PersonRoutingKey;
 import com.github.dannil.springgraphql.personservice.eventbus.PersonMulticastBackpressureEventBus;
 import com.github.dannil.springgraphql.personservice.model.PersonDto;
 import com.github.dannil.springgraphql.personservice.model.PersonEntity;
@@ -9,9 +9,11 @@ import com.github.dannil.springgraphql.personservice.repository.PersonPostgresRe
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -33,7 +35,10 @@ public class PersonService {
     private PersonPostgresRepository repository;
 
     @Autowired
-    private KafkaTemplate<String, PersonDto> kafkaTemplate;
+    private RabbitTemplate template;
+
+    @Autowired
+    private TopicExchange topicExchange;
 
     public Collection<PersonDto> getPersons() {
         return repository.findAll().stream().map(PersonEntity::toDto).toList();
@@ -46,7 +51,7 @@ public class PersonService {
     public PersonDto addPerson(String firstName, String lastName) {
         PersonEntity person = new PersonEntity(firstName, lastName);
         PersonDto persistedDto = repository.save(person).toDto();
-        send(persistedDto, PersonTopic.ADDED);
+        send(topicExchange, PersonRoutingKey.ADDED, persistedDto);
         return persistedDto;
     }
 
@@ -54,7 +59,7 @@ public class PersonService {
         Optional<PersonDto> person = getPerson(id);
         if (person.isPresent()) {
             repository.deleteById(id);
-            send(person.get(), PersonTopic.DELETED);
+            send(topicExchange, PersonRoutingKey.DELETED, person.get());
         }
         return person;
     }
@@ -67,21 +72,22 @@ public class PersonService {
         };
     }
 
-    private void send(PersonDto person, String topic) {
-        kafkaTemplate.send(topic, person);
-        kafkaTemplate.flush();
+    private void send(Exchange exchange, String routingKey, PersonDto person) {
+        template.convertAndSend(exchange.getName(), routingKey, person);
     }
 
-    @KafkaListener(topics = PersonTopic.ADDED)
-    private void addedConsumer(PersonDto person) {
+    @RabbitListener(queues = "#{personAddedQueue.name}")
+    public void addedListener(PersonDto person) {
+        LOGGER.info("Added a person! Content: {}", person);
         Sinks.EmitResult result = addedEventBus.publish(person.getId(), person);
-        LOGGER.info("Added a person! Content: {}, result: {}", person, result);
+        LOGGER.info("EmitResult: {}", result);
     }
 
-    @KafkaListener(topics = PersonTopic.DELETED)
-    private void deletedConsumer(PersonDto person) {
+    @RabbitListener(queues = "#{personDeletedQueue.name}")
+    public void deletedListener(PersonDto person) {
+        LOGGER.info("Deleted a person! Content: {}", person);
         Sinks.EmitResult result = deletedEventBus.publish(person.getId(), person);
-        LOGGER.info("Deleted a person! Content: {}, result: {}", person, result);
+        LOGGER.info("EmitResult: {}", result);
     }
 
 }

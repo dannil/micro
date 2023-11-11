@@ -1,6 +1,6 @@
 package com.github.dannil.springgraphql.personservice.resolver;
 
-import com.github.dannil.springgraphql.personservice.configuration.kafka.PersonEvent;
+import com.github.dannil.springgraphql.personservice.configuration.PersonEvent;
 import com.github.dannil.springgraphql.personservice.model.PersonDto;
 import com.github.dannil.springgraphql.personservice.service.PersonService;
 import lombok.AllArgsConstructor;
