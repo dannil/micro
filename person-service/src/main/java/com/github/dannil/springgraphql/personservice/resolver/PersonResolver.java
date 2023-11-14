@@ -20,40 +20,40 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PersonResolver {
 
-    private PersonService personService;
+  private PersonService personService;
 
-    @QueryMapping
-    public Collection<PersonDto> persons(@Argument Optional<UUID> id) {
-        if (id.isPresent()) {
-            Optional<PersonDto> person = personService.getPerson(id.get());
-            return person.map(List::of).orElseGet(List::of);
-        }
-        return personService.getPersons();
+  @QueryMapping
+  public Collection<PersonDto> persons(@Argument Optional<UUID> id) {
+    if (id.isPresent()) {
+      Optional<PersonDto> person = personService.getPerson(id.get());
+      return person.map(List::of).orElseGet(List::of);
     }
+    return personService.getPersons();
+  }
 
-    @MutationMapping
-    public PersonDto addPerson(@Argument String firstName, @Argument String lastName) {
-        return personService.addPerson(firstName, lastName);
-    }
+  @MutationMapping
+  public PersonDto addPerson(@Argument String firstName, @Argument String lastName) {
+    return personService.addPerson(firstName, lastName);
+  }
 
-    @MutationMapping
-    public Optional<PersonDto> deletePerson(@Argument UUID id) {
-        return personService.deletePerson(id);
-    }
+  @MutationMapping
+  public Optional<PersonDto> deletePerson(@Argument UUID id) {
+    return personService.deletePerson(id);
+  }
 
-    @SubscriptionMapping
-    public Publisher<PersonDto> personSubscription() {
-        return personService.listen(PersonEvent.ALL);
-    }
+  @SubscriptionMapping
+  public Publisher<PersonDto> personSubscription() {
+    return personService.listen(PersonEvent.ALL);
+  }
 
-    @SubscriptionMapping
-    public Publisher<PersonDto> personAddedSubscription() {
-        return personService.listen(PersonEvent.ADDED);
-    }
+  @SubscriptionMapping
+  public Publisher<PersonDto> personAddedSubscription() {
+    return personService.listen(PersonEvent.ADDED);
+  }
 
-    @SubscriptionMapping
-    public Publisher<PersonDto> personDeletedSubscription() {
-        return personService.listen(PersonEvent.DELETED);
-    }
+  @SubscriptionMapping
+  public Publisher<PersonDto> personDeletedSubscription() {
+    return personService.listen(PersonEvent.DELETED);
+  }
 
 }

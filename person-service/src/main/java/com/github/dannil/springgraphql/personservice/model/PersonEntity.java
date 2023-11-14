@@ -12,22 +12,22 @@ import java.util.UUID;
 @Table(name = "person")
 public class PersonEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @NonNull
-    private String firstName;
+  @NonNull
+  private String firstName;
 
-    @NonNull
-    private String lastName;
+  @NonNull
+  private String lastName;
 
-    // For JPA only, no use
-    public PersonEntity() {
+  // For JPA only, no use
+  public PersonEntity() {
 
-    }
+  }
 
-    public PersonDto toDto() {
-        return new PersonDto(id, firstName, lastName);
-    }
+  public PersonDto toDto() {
+    return new PersonDto(id, firstName, lastName);
+  }
 }

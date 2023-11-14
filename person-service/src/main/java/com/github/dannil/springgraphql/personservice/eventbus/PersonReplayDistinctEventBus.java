@@ -11,24 +11,24 @@ import java.util.*;
 @Service
 public class PersonReplayDistinctEventBus implements EventBus<String, PersonDto> {
 
-    private Sinks.Many<PersonDto> sink;
-    private Flux<PersonDto> flux;
+  private Sinks.Many<PersonDto> sink;
+  private Flux<PersonDto> flux;
 
-    public PersonReplayDistinctEventBus() {
-        this.sink = Sinks.many().replay().all();
-        this.flux = sink.asFlux().distinct(PersonDto::getId);
-    }
+  public PersonReplayDistinctEventBus() {
+    this.sink = Sinks.many().replay().all();
+    this.flux = sink.asFlux().distinct(PersonDto::getId);
+  }
 
-    public Sinks.EmitResult publish(String key, PersonDto value) {
-        return sink.tryEmitNext(value);
-    }
+  public Sinks.EmitResult publish(String key, PersonDto value) {
+    return sink.tryEmitNext(value);
+  }
 
-    public Publisher<PersonDto> subscribe() {
-        return flux;
-    }
+  public Publisher<PersonDto> subscribe() {
+    return flux;
+  }
 
-    public Publisher<PersonDto> subscribe(String key) {
-        return flux.filter(p -> Objects.equals(key, p.getId()));
-    }
+  public Publisher<PersonDto> subscribe(String key) {
+    return flux.filter(p -> Objects.equals(key, p.getId()));
+  }
 
 }

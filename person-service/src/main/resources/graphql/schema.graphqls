@@ -1,32 +1,32 @@
 scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")
 
 type Person {
-    id: ID!
-    firstName: String!
-    lastName: String!
+  id: ID!
+  firstName: String!
+  lastName: String!
 }
 
 type Address {
-    street: String!
-    zipCode: String!
+  street: String!
+  zipCode: String!
 }
 
 input AddressInput {
-    street: String!
-    zipCode: String!
+  street: String!
+  zipCode: String!
 }
 
 type Query {
-    persons(id: UUID): [Person!]!
+  persons(id: UUID): [Person!]!
 }
 
 type Mutation {
-    addPerson(firstName: String!, lastName: String!): Person!
-    deletePerson(id: UUID!): Person
+  addPerson(firstName: String!, lastName: String!): Person!
+  deletePerson(id: UUID!): Person
 }
 
 type Subscription {
-    personSubscription(id: UUID): Person!
-    personAddedSubscription(id: UUID): Person!
-    personDeletedSubscription(id: UUID): Person!
+  personSubscription(id: UUID): Person!
+  personAddedSubscription(id: UUID): Person!
+  personDeletedSubscription(id: UUID): Person!
 }

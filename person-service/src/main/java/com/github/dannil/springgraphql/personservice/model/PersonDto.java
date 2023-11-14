@@ -11,8 +11,8 @@ import java.util.UUID;
 @ToString
 public class PersonDto {
 
-    private UUID id;
-    private String firstName;
-    private String lastName;
+  private UUID id;
+  private String firstName;
+  private String lastName;
 
 }

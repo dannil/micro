@@ -13,24 +13,24 @@ import java.util.UUID;
 @Service
 public class PersonMulticastBackpressureEventBus implements EventBus<UUID, PersonDto> {
 
-    private Sinks.Many<PersonDto> sink;
-    private Flux<PersonDto> flux;
+  private Sinks.Many<PersonDto> sink;
+  private Flux<PersonDto> flux;
 
-    public PersonMulticastBackpressureEventBus() {
-        this.sink = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
-        this.flux = sink.asFlux();
-    }
+  public PersonMulticastBackpressureEventBus() {
+    this.sink = Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
+    this.flux = sink.asFlux();
+  }
 
-    public Sinks.EmitResult publish(UUID key, PersonDto value) {
-        return sink.tryEmitNext(value);
-    }
+  public Sinks.EmitResult publish(UUID key, PersonDto value) {
+    return sink.tryEmitNext(value);
+  }
 
-    public Publisher<PersonDto> subscribe() {
-        return flux;
-    }
+  public Publisher<PersonDto> subscribe() {
+    return flux;
+  }
 
-    public Publisher<PersonDto> subscribe(UUID key) {
-        return flux.filter(p -> Objects.equals(key, p.getId()));
-    }
+  public Publisher<PersonDto> subscribe(UUID key) {
+    return flux.filter(p -> Objects.equals(key, p.getId()));
+  }
 
 }
