@@ -1,9 +1,15 @@
 package com.github.dannil.micro.personservice.configuration.rabbitmq;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dannil.micro.personservice.configuration.PersonRoutingKey;
 
-import org.springframework.amqp.core.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -16,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfiguration {
 
   @Value("${spring.application.name}")
-  private String applicationName;
+  private static String applicationName;
 
   @Bean
   public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
@@ -42,20 +48,12 @@ public class RabbitMQConfiguration {
 
   @Bean
   public Queue personAddedQueue() {
-    return QueueBuilder.nonDurable()
-      .autoDelete()
-      .exclusive()
-      .deadLetterExchange(deadLetterExchange().getName())
-      .build();
+    return QueueBuilder.nonDurable().autoDelete().exclusive().deadLetterExchange(deadLetterExchange().getName()).build();
   }
 
   @Bean
   public Queue personDeletedQueue() {
-    return QueueBuilder.nonDurable()
-      .autoDelete()
-      .exclusive()
-      .deadLetterExchange(deadLetterExchange().getName())
-      .build();
+    return QueueBuilder.nonDurable().autoDelete().exclusive().deadLetterExchange(deadLetterExchange().getName()).build();
   }
 
   @Bean
