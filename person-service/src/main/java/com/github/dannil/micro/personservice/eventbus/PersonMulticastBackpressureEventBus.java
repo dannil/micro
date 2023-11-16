@@ -1,16 +1,16 @@
 package com.github.dannil.micro.personservice.eventbus;
 
-import org.reactivestreams.Publisher;
-import org.springframework.stereotype.Service;
+import java.util.Objects;
+import java.util.UUID;
 
 import com.github.dannil.micro.personservice.model.PersonDto;
+
+import org.reactivestreams.Publisher;
+import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
-
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 public class PersonMulticastBackpressureEventBus implements EventBus<UUID, PersonDto> {

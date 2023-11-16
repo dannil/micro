@@ -1,17 +1,18 @@
 package com.github.dannil.micro.personservice.eventbus;
 
-import org.reactivestreams.Publisher;
-import org.springframework.stereotype.Service;
+import java.util.Objects;
+import java.util.UUID;
 
 import com.github.dannil.micro.personservice.model.PersonDto;
+
+import org.reactivestreams.Publisher;
+import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
-import java.util.*;
-
 @Service
-public class PersonReplayDistinctEventBus implements EventBus<String, PersonDto> {
+public class PersonReplayDistinctEventBus implements EventBus<UUID, PersonDto> {
 
   private Sinks.Many<PersonDto> sink;
   private Flux<PersonDto> flux;
@@ -21,7 +22,7 @@ public class PersonReplayDistinctEventBus implements EventBus<String, PersonDto>
     this.flux = sink.asFlux().distinct(PersonDto::getId);
   }
 
-  public Sinks.EmitResult publish(String key, PersonDto value) {
+  public Sinks.EmitResult publish(UUID key, PersonDto value) {
     return sink.tryEmitNext(value);
   }
 
@@ -29,7 +30,7 @@ public class PersonReplayDistinctEventBus implements EventBus<String, PersonDto>
     return flux;
   }
 
-  public Publisher<PersonDto> subscribe(String key) {
+  public Publisher<PersonDto> subscribe(UUID key) {
     return flux.filter(p -> Objects.equals(key, p.getId()));
   }
 
