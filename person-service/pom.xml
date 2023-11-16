@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.github.dannil.springgraphql</groupId>
+    <groupId>com.github.dannil.micro</groupId>
     <artifactId>parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.github.dannil.spring-graphql</groupId>
+  <groupId>com.github.dannil.micro</groupId>
   <artifactId>person-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>person-service</name>

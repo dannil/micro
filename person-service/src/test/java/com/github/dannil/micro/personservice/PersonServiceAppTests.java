@@ -1,4 +1,4 @@
-package com.github.dannil.springgraphql.personservice;
+package com.github.dannil.micro.personservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

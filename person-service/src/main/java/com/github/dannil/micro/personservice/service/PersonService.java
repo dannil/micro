@@ -1,11 +1,5 @@
-package com.github.dannil.springgraphql.personservice.service;
+package com.github.dannil.micro.personservice.service;
 
-import com.github.dannil.springgraphql.personservice.configuration.PersonEvent;
-import com.github.dannil.springgraphql.personservice.configuration.PersonRoutingKey;
-import com.github.dannil.springgraphql.personservice.eventbus.PersonMulticastBackpressureEventBus;
-import com.github.dannil.springgraphql.personservice.model.PersonDto;
-import com.github.dannil.springgraphql.personservice.model.PersonEntity;
-import com.github.dannil.springgraphql.personservice.repository.PersonPostgresRepository;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +9,14 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.github.dannil.micro.personservice.configuration.PersonEvent;
+import com.github.dannil.micro.personservice.configuration.PersonRoutingKey;
+import com.github.dannil.micro.personservice.eventbus.PersonMulticastBackpressureEventBus;
+import com.github.dannil.micro.personservice.model.PersonDto;
+import com.github.dannil.micro.personservice.model.PersonEntity;
+import com.github.dannil.micro.personservice.repository.PersonPostgresRepository;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 

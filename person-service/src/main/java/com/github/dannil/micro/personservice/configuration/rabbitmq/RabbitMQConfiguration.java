@@ -1,7 +1,8 @@
-package com.github.dannil.springgraphql.personservice.configuration.rabbitmq;
+package com.github.dannil.micro.personservice.configuration.rabbitmq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dannil.springgraphql.personservice.configuration.PersonRoutingKey;
+import com.github.dannil.micro.personservice.configuration.PersonRoutingKey;
+
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -10,8 +11,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.UUID;
 
 @Configuration
 public class RabbitMQConfiguration {
@@ -43,7 +42,7 @@ public class RabbitMQConfiguration {
 
   @Bean
   public Queue personAddedQueue() {
-    return QueueBuilder.nonDurable(applicationName + ".person-added." + UUID.randomUUID())
+    return QueueBuilder.nonDurable()
       .autoDelete()
       .exclusive()
       .deadLetterExchange(deadLetterExchange().getName())
@@ -52,7 +51,7 @@ public class RabbitMQConfiguration {
 
   @Bean
   public Queue personDeletedQueue() {
-    return QueueBuilder.nonDurable(applicationName + ".person-deleted." + UUID.randomUUID())
+    return QueueBuilder.nonDurable()
       .autoDelete()
       .exclusive()
       .deadLetterExchange(deadLetterExchange().getName())

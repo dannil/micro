@@ -1,4 +1,4 @@
-package com.github.dannil.springgraphql.personservice.model;
+package com.github.dannil.micro.personservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;

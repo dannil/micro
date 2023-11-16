@@ -1,7 +1,8 @@
-package com.github.dannil.springgraphql.personservice.repository;
+package com.github.dannil.micro.personservice.repository;
 
-import com.github.dannil.springgraphql.personservice.model.PersonEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.github.dannil.micro.personservice.model.PersonEntity;
 
 import java.util.UUID;
 

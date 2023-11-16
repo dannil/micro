@@ -1,8 +1,10 @@
-package com.github.dannil.springgraphql.personservice.eventbus;
+package com.github.dannil.micro.personservice.eventbus;
 
-import com.github.dannil.springgraphql.personservice.model.PersonDto;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
+
+import com.github.dannil.micro.personservice.model.PersonDto;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 

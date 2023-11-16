@@ -1,8 +1,5 @@
-package com.github.dannil.springgraphql.personservice.resolver;
+package com.github.dannil.micro.personservice.resolver;
 
-import com.github.dannil.springgraphql.personservice.configuration.PersonEvent;
-import com.github.dannil.springgraphql.personservice.model.PersonDto;
-import com.github.dannil.springgraphql.personservice.service.PersonService;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -10,6 +7,10 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
+
+import com.github.dannil.micro.personservice.configuration.PersonEvent;
+import com.github.dannil.micro.personservice.model.PersonDto;
+import com.github.dannil.micro.personservice.service.PersonService;
 
 import java.util.Collection;
 import java.util.List;

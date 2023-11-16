@@ -1,4 +1,4 @@
-package com.github.dannil.springgraphql.personservice;
+package com.github.dannil.micro.personservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

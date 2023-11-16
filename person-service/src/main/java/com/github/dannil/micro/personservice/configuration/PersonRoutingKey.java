@@ -1,4 +1,4 @@
-package com.github.dannil.springgraphql.personservice.configuration;
+package com.github.dannil.micro.personservice.configuration;
 
 public class PersonRoutingKey {
 

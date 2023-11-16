@@ -10,12 +10,12 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>com.github.dannil.springgraphql</groupId>
+  <groupId>com.github.dannil.micro</groupId>
   <artifactId>parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>parent</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Test project for trying out microservices and event-driven architecture concepts</description>
 
   <properties>
     <java.version>17</java.version>
