@@ -10,8 +10,47 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_MULTIPLE_DATABASES: default,person-service
-  rabbitmq:
+  rabbitmq-1:
     image: 'rabbitmq:3-management'
+    hostname: rabbitmq-1
+    environment:
+      - RABBITMQ_LOGS=/var/log/rabbitmq/stdout.log
+    volumes:
+      - ./docker/rabbitmq/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+      - ./docker/rabbitmq/cluster-entrypoint.sh:/usr/local/bin/cluster-entrypoint.sh
+    entrypoint: /usr/local/bin/cluster-entrypoint.sh
+  rabbitmq-2:
+    image: 'rabbitmq:3-management'
+    hostname: rabbitmq-2
+    depends_on:
+      - rabbitmq-1
+    environment:
+      - RABBITMQ_LOGS=/var/log/rabbitmq/stdout.log
+      - JOIN_CLUSTER_HOST=rabbitmq-1
+    volumes:
+      - ./docker/rabbitmq/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+      - ./docker/rabbitmq/cluster-entrypoint.sh:/usr/local/bin/cluster-entrypoint.sh
+    entrypoint: /usr/local/bin/cluster-entrypoint.sh
+  rabbitmq-3:
+    image: 'rabbitmq:3-management'
+    hostname: rabbitmq-3
+    depends_on:
+      - rabbitmq-1
+    environment:
+      - RABBITMQ_LOGS=/var/log/rabbitmq/stdout.log
+      - JOIN_CLUSTER_HOST=rabbitmq-1
+    volumes:
+      - ./docker/rabbitmq/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+      - ./docker/rabbitmq/cluster-entrypoint.sh:/usr/local/bin/cluster-entrypoint.sh
+    entrypoint: /usr/local/bin/cluster-entrypoint.sh
+  haproxy:
+    image: haproxy:2.8
+    volumes:
+      - ./docker/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - rabbitmq-1
+      - rabbitmq-2
+      - rabbitmq-3
     ports:
-      - '32200:5672'
-      - '32210:15672'
+      - 32200:5672
+      - 32210:15672
