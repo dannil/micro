@@ -21,7 +21,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
 @Service
@@ -30,10 +29,7 @@ public class PersonService {
   private static final Logger LOGGER = LoggerFactory.getLogger(PersonService.class);
 
   @Autowired
-  private PersonMulticastBackpressureEventBus addedEventBus;
-
-  @Autowired
-  private PersonMulticastBackpressureEventBus deletedEventBus;
+  private PersonMulticastBackpressureEventBus eventBus;
 
   @Autowired
   private PersonPostgresRepository repository;
@@ -69,11 +65,7 @@ public class PersonService {
   }
 
   public Publisher<PersonDto> listen(PersonEvent event) {
-    return switch (event) {
-      case ADDED -> addedEventBus.subscribe();
-      case DELETED -> deletedEventBus.subscribe();
-      case ALL -> Flux.concat(addedEventBus.subscribe(), deletedEventBus.subscribe());
-    };
+    return eventBus.subscribe(Optional.empty(), Optional.of(event));
   }
 
   private void send(Exchange exchange, String routingKey, PersonDto person) {
@@ -83,14 +75,14 @@ public class PersonService {
   @RabbitListener(queues = "#{personAddedQueue.name}")
   public void addedListener(PersonDto person) {
     LOGGER.info("Added a person! Content: {}", person);
-    Sinks.EmitResult result = addedEventBus.publish(person.getId(), person);
+    Sinks.EmitResult result = eventBus.publish(person, PersonEvent.ADDED);
     LOGGER.info("EmitResult: {}", result);
   }
 
   @RabbitListener(queues = "#{personDeletedQueue.name}")
   public void deletedListener(PersonDto person) {
-    LOGGER.info("Deleted a person! Content: {}", person);
-    Sinks.EmitResult result = deletedEventBus.publish(person.getId(), person);
+    LOGGER.info("Deleted a person! Content: {}", person.getId(), person);
+    Sinks.EmitResult result = eventBus.publish(person, PersonEvent.DELETED);
     LOGGER.info("EmitResult: {}", result);
   }
 

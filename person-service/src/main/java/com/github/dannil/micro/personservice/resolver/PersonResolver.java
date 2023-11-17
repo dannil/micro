@@ -44,18 +44,8 @@ public class PersonResolver {
   }
 
   @SubscriptionMapping
-  public Publisher<PersonDto> personSubscription() {
-    return personService.listen(PersonEvent.ALL);
-  }
-
-  @SubscriptionMapping
-  public Publisher<PersonDto> personAddedSubscription() {
-    return personService.listen(PersonEvent.ADDED);
-  }
-
-  @SubscriptionMapping
-  public Publisher<PersonDto> personDeletedSubscription() {
-    return personService.listen(PersonEvent.DELETED);
+  public Publisher<PersonDto> personSubscription(@Argument Optional<PersonEvent> event) {
+    return personService.listen(event.orElse(PersonEvent.ALL));
   }
 
 }

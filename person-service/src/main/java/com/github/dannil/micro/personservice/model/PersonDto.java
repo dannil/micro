@@ -13,10 +13,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PersonDto {
+public class PersonDto implements Messageable<UUID> {
 
   private UUID id;
   private String firstName;
   private String lastName;
+
+  @Override
+  public UUID messageId() {
+    return id;
+  }
 
 }
