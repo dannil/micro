@@ -1,0 +1,31 @@
+server.port: 32001
+
+spring.application.name: product-service
+
+spring.graphql:
+  graphiql.enabled: true
+  websocket.path: /graphql
+
+spring.datasource.hikari:
+  connectionTimeout: 20000
+  maximumPoolSize: 5
+
+spring.datasource:
+  url: jdbc:postgresql://localhost:32100/product-service
+  username: product-service
+  password: product-service
+
+spring.jpa.properties.jakarta.persistence.schema-generation:
+  database.action: drop-and-create
+  create-source: metadata
+  drop-source: metadata
+
+spring.rabbitmq:
+  host: localhost
+  port: 32200
+  listener.simple.retry:
+    enabled: true
+    initial-interval: 3s
+    max-attempts: 5
+    max-interval: 20s
+    multiplier: 2
