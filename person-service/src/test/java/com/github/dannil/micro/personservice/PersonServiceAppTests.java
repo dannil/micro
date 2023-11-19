@@ -15,13 +15,13 @@ import org.testcontainers.utility.DockerImageName;
 public class PersonServiceAppTests {
 
   @Container
-  public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-    DockerImageName.parse("postgres:16")
+  private static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+      DockerImageName.parse("postgres:16")
   );
 
   @Container
-  public static RabbitMQContainer rabbitMQ = new RabbitMQContainer(
-    DockerImageName.parse("rabbitmq:3-management")
+  private static RabbitMQContainer rabbitMQ = new RabbitMQContainer(
+      DockerImageName.parse("rabbitmq:3-management")
   );
 
   @DynamicPropertySource
