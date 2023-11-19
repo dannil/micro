@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: default,person-service
+      POSTGRES_MULTIPLE_DATABASES: default,account-service
   rabbitmq:
     image: 'rabbitmq:3-management'
     ports:

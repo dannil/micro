@@ -1,0 +1,35 @@
+scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")
+
+enum AccountEvent {
+  ADDED
+  DELETED
+}
+
+type Account {
+  id: ID!
+  firstName: String!
+  lastName: String!
+}
+
+type Address {
+  street: String!
+  zipCode: String!
+}
+
+input AddressInput {
+  street: String!
+  zipCode: String!
+}
+
+type Query {
+  accounts(id: UUID): [Account!]!
+}
+
+type Mutation {
+  addAccount(firstName: String!, lastName: String!): Account!
+  deleteAccount(id: UUID!): Account
+}
+
+type Subscription {
+  accountSubscription(event: AccountEvent): Account!
+}
