@@ -3,7 +3,7 @@ services:
   postgres:
     image: 'postgres:16'
     volumes:
-      - ./docker/pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./.docker/pg-init-scripts:/docker-entrypoint-initdb.d
     ports:
       - '32100:5432'
     environment:
