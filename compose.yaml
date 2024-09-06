@@ -8,9 +8,30 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: default,account-service
+      POSTGRES_MULTIPLE_DATABASES: default,account-service,keycloak
   rabbitmq:
     image: 'rabbitmq:3-management'
     ports:
       - '32200:5672'
       - '32210:15672'
+  keycloak:
+    image: 'keycloak/keycloak:25.0'
+    command: start
+    ports:
+      - '32300:8080'
+    environment:
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+    restart: always
+    depends_on:
+     - postgres
