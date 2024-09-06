@@ -32,3 +32,4 @@ spring.rabbitmq:
 
 spring.security.oauth2.resourceserver.jwt:
   issuer-uri: http://localhost:32300/auth/realms/micro
+  jwk-set-uri: http://localhost:32300/realms/micro/protocol/openid-connect/certs
