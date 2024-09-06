@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfiguration {
 
   @Value("${spring.application.name}")
-  private static String applicationName;
+  private String applicationName;
 
   @Bean
   public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
