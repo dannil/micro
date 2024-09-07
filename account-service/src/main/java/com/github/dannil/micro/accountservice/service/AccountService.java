@@ -48,8 +48,8 @@ public class AccountService {
     return repository.findById(id).map(AccountEntity::toDto);
   }
 
-  public AccountDto addAccount(String firstName, String lastName) {
-    AccountEntity account = new AccountEntity(firstName, lastName);
+  public AccountDto addAccount(String firstName, String lastName, String email) {
+    AccountEntity account = new AccountEntity(firstName, lastName, email);
     AccountDto persistedDto = repository.save(account).toDto();
     send(topicExchange, AccountRoutingKey.ADDED, persistedDto);
     return persistedDto;

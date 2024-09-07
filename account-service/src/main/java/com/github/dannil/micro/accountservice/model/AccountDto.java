@@ -18,6 +18,7 @@ public class AccountDto implements Messageable<UUID> {
   private UUID id;
   private String firstName;
   private String lastName;
+  private String email;
 
   @Override
   public UUID messageId() {

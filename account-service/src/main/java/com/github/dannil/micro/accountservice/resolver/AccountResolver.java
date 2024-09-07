@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.github.dannil.micro.accountservice.auth.IsResourceOwner;
 import com.github.dannil.micro.accountservice.configuration.AccountEvent;
 import com.github.dannil.micro.accountservice.model.AccountDto;
 import com.github.dannil.micro.accountservice.service.AccountService;
@@ -27,8 +28,7 @@ public class AccountResolver {
   private AccountService accountService;
 
   @QueryMapping
-  public Collection<AccountDto> accounts(@AuthenticationPrincipal JwtAuthenticationToken auth,
-      @Argument Optional<UUID> id) {
+  public Collection<AccountDto> accounts(@Argument Optional<UUID> id) {
     if (id.isPresent()) {
       Optional<AccountDto> account = accountService.getAccount(id.get());
       return account.map(List::of).orElseGet(List::of);
@@ -36,9 +36,16 @@ public class AccountResolver {
     return accountService.getAccounts();
   }
 
+  @QueryMapping
+  @IsResourceOwner
+  public AccountDto me(@AuthenticationPrincipal JwtAuthenticationToken auth,
+      @Argument UUID id) {
+    return accountService.getAccount(id).orElseThrow(IllegalArgumentException::new);
+  }
+
   @MutationMapping
-  public AccountDto addAccount(@Argument String firstName, @Argument String lastName) {
-    return accountService.addAccount(firstName, lastName);
+  public AccountDto addAccount(@Argument String firstName, @Argument String lastName, @Argument String email) {
+    return accountService.addAccount(firstName, lastName, email);
   }
 
   @MutationMapping

@@ -29,12 +29,15 @@ public class AccountEntity {
   @NonNull
   private String lastName;
 
+  @NonNull
+  private String email;
+
   // For JPA only, no use
   public AccountEntity() {
 
   }
 
   public AccountDto toDto() {
-    return new AccountDto(id, firstName, lastName);
+    return new AccountDto(id, firstName, lastName, email);
   }
 }

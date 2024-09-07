@@ -5,11 +5,20 @@ enum AccountEvent {
   DELETED
 }
 
-type Account {
+interface Account {
   id: ID!
   firstName: String!
   lastName: String!
+  email: String!
 }
+
+#type AccountMe implements Account {
+#  id: ID!
+#  firstName: String!
+#  lastName: String!
+#  email: String!
+#  secret: String!
+#}
 
 type Address {
   street: String!
@@ -23,6 +32,7 @@ input AddressInput {
 
 type Query {
   accounts(id: UUID): [Account!]!
+  me(id: UUID!): Account!
 }
 
 type Mutation {
