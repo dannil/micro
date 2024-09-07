@@ -14,6 +14,8 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Controller;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +27,8 @@ public class AccountResolver {
   private AccountService accountService;
 
   @QueryMapping
-  public Collection<AccountDto> accounts(@Argument Optional<UUID> id) {
+  public Collection<AccountDto> accounts(@AuthenticationPrincipal JwtAuthenticationToken auth,
+      @Argument Optional<UUID> id) {
     if (id.isPresent()) {
       Optional<AccountDto> account = accountService.getAccount(id.get());
       return account.map(List::of).orElseGet(List::of);
